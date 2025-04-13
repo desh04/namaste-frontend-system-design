@@ -1,26 +1,28 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const crypto = require('crypto');
+const express = require("express");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const crypto = require("crypto");
 
 const app = express();
 const port = 3000;
 
 // Use sessions for tracking CSRF tokens
-app.use(session({
-  secret: 'your_secret_key', // Change this to a secure secret key
-  resave: false,
-  saveUninitialized: true,
-}));
+app.use(
+  session({
+    secret: "your_secret_key", // Change this to a secure secret key
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Serve HTML form
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   // Generate CSRF token and store it in the session
   if (!req.session.csrfToken) {
-    req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+    req.session.csrfToken = crypto.randomBytes(32).toString("hex");
   }
 
   // Render the HTML form
@@ -61,11 +63,11 @@ app.get('/', (req, res) => {
 });
 
 // Process form submission
-app.post('/fundtransfer', (req, res) => {
+app.post("/fundtransfer", (req, res) => {
   // Validate CSRF token on the server side
   const submittedToken = req.body.csrf_token;
   if (!submittedToken || submittedToken !== req.session.csrfToken) {
-    res.status(403).send('CSRF Token Validation Failed!');
+    res.status(403).send("CSRF Token Validation Failed!");
     return;
   }
 
@@ -75,7 +77,7 @@ app.post('/fundtransfer', (req, res) => {
   // Clear CSRF token after processing
   delete req.session.csrfToken;
 
-  res.send('Form submitted successfully!');
+  res.send("Form submitted successfully!");
 });
 
 app.listen(port, () => {

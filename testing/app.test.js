@@ -1,3 +1,6 @@
+// NOTE : File name could be app.spec.js also
+//        OR __tests__ folder
+
 const sortingByAge = require("./app");
 
 test("testing if the first user is Elon after sorting", () => {
